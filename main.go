@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/depado/gorich"
 
 func main() {
-	fmt.Println("Hello From Action Sample")
+	gorich.Println("[green]Hello From Action[/]")
 }
