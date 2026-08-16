@@ -17,6 +17,6 @@ func main() {
 		Name:        "Sample",
 		Description: "sample hello-world action",
 	}, func(ctx context.Context, in Input) (Output, error) {
-		return Output{Message: "Hello From Action"}, nil
+		return Output{Message: "Hello From Action But Modified"}, nil
 	})
 }
