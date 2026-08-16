@@ -6,17 +6,20 @@ import (
 	"github.com/lunaya-dubai/lunaya-flow-runtime/sdk/action"
 )
 
-type Input struct{}
+type Input struct {
+	In1 float64 `json:"in1"`
+	In2 float64 `json:"in2"`
+}
 
 type Output struct {
-	Message string `json:"message"`
+	Result float64 `json:"result"`
 }
 
 func main() {
 	action.Main(action.Meta{
-		Name:        "Sample",
-		Description: "sample hello-world action",
+		Name:        "Mul",
+		Description: "multiplies two numbers",
 	}, func(ctx context.Context, in Input) (Output, error) {
-		return Output{Message: "Hello From Action But Modified"}, nil
+		return Output{Result: in.In1 * in.In2}, nil
 	})
 }
