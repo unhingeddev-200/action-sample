@@ -2,5 +2,5 @@ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
 github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
 github.com/google/jsonschema-go v0.4.3 h1:/DBOLZTfDow7pe2GmaJNhltueGTtDKICi8V8p+DQPd0=
 github.com/google/jsonschema-go v0.4.3/go.mod h1:r5quNTdLOYEz95Ru18zA0ydNbBuYoo9tgaYcxEYhJVE=
-github.com/lunaya-dubai/lunaya-flow-runtime v0.0.0-20260812170726-28cbed2e9fc2 h1:S+C3lqUBg/54Uc8GWl8pZH//V1LZSY8X2EOEMptp4S0=
-github.com/lunaya-dubai/lunaya-flow-runtime v0.0.0-20260812170726-28cbed2e9fc2/go.mod h1:otoq1fk5iAS/2+bw3OQi1eMds4YjO8G0zr+Lv+0LyGs=
+github.com/lunaya-dubai/lunaya-flow-runtime v0.0.0-20260828173433-01454af158d3 h1:b4wz/WR5GbVmbPqRDtdxyBSLyqWmTsr6mp3VJIEve7M=
+github.com/lunaya-dubai/lunaya-flow-runtime v0.0.0-20260828173433-01454af158d3/go.mod h1:E4b7Ko7pcdg4w3Dbwi58q6b5pww6bElpKjoMcTbWTSQ=
