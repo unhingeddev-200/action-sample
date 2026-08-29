@@ -11,18 +11,18 @@ import (
 )
 
 type Case struct {
-	Match any    `json:"match"`
+	Match any    `json:"match,omitempty"`
 	Label string `json:"label"`
 }
 
 type Input struct {
-	Mode    string `json:"mode"` // if | switch
-	Op      string `json:"op"`   // eq,ne,gt,gte,lt,lte,truthy
-	Left    any    `json:"left"`
-	Right   any    `json:"right"`
-	Value   any    `json:"value"`
-	Cases   []Case `json:"cases"`
-	Default string `json:"default"`
+	Mode    string `json:"mode"`
+	Op      string `json:"op,omitempty"`
+	Left    any    `json:"left,omitempty"`
+	Right   any    `json:"right,omitempty"`
+	Value   any    `json:"value,omitempty"`
+	Cases   []Case `json:"cases,omitempty"`
+	Default string `json:"default,omitempty"`
 }
 
 type Output struct {

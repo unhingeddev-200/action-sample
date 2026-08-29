@@ -17,10 +17,10 @@ import (
 type Input struct {
 	Method         string            `json:"method"`
 	URL            string            `json:"url"`
-	Headers        map[string]string `json:"headers"`
-	Query          map[string]string `json:"query"`
-	Body           any               `json:"body"`
-	ResponseFormat string            `json:"responseFormat"` // json|text
+	Headers        map[string]string `json:"headers,omitempty"`
+	Query          map[string]string `json:"query,omitempty"`
+	Body           any               `json:"body,omitempty"`
+	ResponseFormat string            `json:"responseFormat,omitempty"`
 }
 
 type Output struct {

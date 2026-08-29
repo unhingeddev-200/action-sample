@@ -7,7 +7,7 @@ import (
 )
 
 type Input struct {
-	Assignments []Assignment `json:"assignments"`
+	Assignments []Assignment `json:"assignments,omitempty"`
 }
 
 type Assignment struct {

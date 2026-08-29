@@ -9,7 +9,7 @@ import (
 )
 
 type Input struct {
-	Seconds float64 `json:"seconds"`
+	Seconds float64 `json:"seconds,omitempty"`
 }
 
 type Output struct {
