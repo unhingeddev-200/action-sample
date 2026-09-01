@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/dop251/goja"
 	"github.com/lunaya-dubai/lunaya-flow-runtime/sdk/action"
@@ -39,10 +40,24 @@ func main() {
 				return v
 			},
 		})
-		v, err := vm.RunString(in.Source)
+		v, err := vm.RunString(wrapUserSource(in.Source))
 		if err != nil {
 			return Output{}, err
 		}
 		return Output{Result: v.Export()}, nil
 	})
+}
+
+// wrapUserSource runs user code inside an IIFE so `return` works at the top level
+// (goja rejects bare return statements in RunString scripts).
+func wrapUserSource(source string) string {
+	s := strings.TrimSpace(source)
+	if s == "" {
+		return s
+	}
+	lower := strings.ToLower(s)
+	if strings.HasPrefix(lower, "(function") || strings.HasPrefix(lower, "function") {
+		return s
+	}
+	return "(function() {\n" + source + "\n})()"
 }
