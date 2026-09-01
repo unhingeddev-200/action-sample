@@ -4,7 +4,7 @@ go 1.26.5
 
 require (
 	github.com/dop251/goja v0.0.0-20260826204918-8f1c0696a37b
-	github.com/lunaya-dubai/lunaya-flow-runtime v0.0.0-20260901051335-fdadf7b904d9
+	github.com/lunaya-dubai/lunaya-flow-runtime v0.0.0-20260901190000-518dca5fc117
 	github.com/spf13/afero v1.15.0
 )
 

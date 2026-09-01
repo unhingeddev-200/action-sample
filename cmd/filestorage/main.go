@@ -109,7 +109,7 @@ func readFile(fs afero.Fs, key, enc string) (Output, error) {
 	return out, nil
 }
 
-func writeFile(fs afero.Fs, key, content, enc string) (Output, error) {
+func writeFile(_ afero.Fs, key, content, enc string) (Output, error) {
 	if key == "" {
 		return Output{}, fmt.Errorf("path is required")
 	}
@@ -125,17 +125,8 @@ func writeFile(fs afero.Fs, key, content, enc string) (Output, error) {
 	default:
 		raw = []byte(content)
 	}
-	if dir := path.Dir(key); dir != "." && dir != "" {
-		if err := fs.MkdirAll(dir, 0o755); err != nil {
-			return Output{}, err
-		}
-	}
-	f, err := fs.Create(key)
-	if err != nil {
-		return Output{}, err
-	}
-	defer f.Close()
-	if _, err := f.Write(raw); err != nil {
+	cfg := s3sdk.EnvFromOS()
+	if err := s3sdk.PutBytes(context.Background(), cfg, key, raw); err != nil {
 		return Output{}, err
 	}
 	return Output{OK: true, Encoding: mode}, nil
