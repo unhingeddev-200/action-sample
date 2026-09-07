@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/dop251/goja"
@@ -29,6 +30,7 @@ func main() {
 		}
 		vm := goja.New()
 		_ = vm.Set("input", in.Input)
+		_ = vm.Set("env", environMap())
 		_ = vm.Set("JSON", map[string]any{
 			"stringify": func(v any) string {
 				b, _ := json.Marshal(v)
@@ -60,4 +62,16 @@ func wrapUserSource(source string) string {
 		return s
 	}
 	return "(function() {\n" + source + "\n})()"
+}
+
+func environMap() map[string]string {
+	out := make(map[string]string)
+	for _, e := range os.Environ() {
+		k, v, ok := strings.Cut(e, "=")
+		if !ok || k == "" {
+			continue
+		}
+		out[k] = v
+	}
+	return out
 }
