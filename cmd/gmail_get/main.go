@@ -18,14 +18,16 @@ type Input struct {
 }
 
 type Output struct {
-	ID           string          `json:"id"`
-	ThreadID     string          `json:"threadId,omitempty"`
-	LabelIDs     []string        `json:"labelIds,omitempty"`
-	Snippet      string          `json:"snippet,omitempty"`
-	InternalDate string          `json:"internalDate,omitempty"`
-	Payload      json.RawMessage `json:"payload,omitempty"`
-	SizeEstimate int64           `json:"sizeEstimate,omitempty"`
-	Raw          string          `json:"raw,omitempty"`
+	ID           string   `json:"id"`
+	ThreadID     string   `json:"threadId,omitempty"`
+	LabelIDs     []string `json:"labelIds,omitempty"`
+	Snippet      string   `json:"snippet,omitempty"`
+	InternalDate string   `json:"internalDate,omitempty"`
+	// Payload is the Gmail message.payload object (MIME tree). Use any so the
+	// generated JSON Schema accepts an object (json.RawMessage is []byte → array).
+	Payload      any      `json:"payload,omitempty"`
+	SizeEstimate int64    `json:"sizeEstimate,omitempty"`
+	Raw          string   `json:"raw,omitempty"`
 }
 
 func main() {
@@ -40,13 +42,19 @@ func main() {
 		if err != nil {
 			return Output{}, err
 		}
+		var payload any
+		if len(msg.Payload) > 0 {
+			if err := json.Unmarshal(msg.Payload, &payload); err != nil {
+				return Output{}, fmt.Errorf("decode payload: %w", err)
+			}
+		}
 		return Output{
 			ID:           msg.ID,
 			ThreadID:     msg.ThreadID,
 			LabelIDs:     msg.LabelIDs,
 			Snippet:      msg.Snippet,
 			InternalDate: msg.InternalDate,
-			Payload:      msg.Payload,
+			Payload:      payload,
 			SizeEstimate: msg.SizeEstimate,
 			Raw:          msg.Raw,
 		}, nil
