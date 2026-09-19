@@ -21,6 +21,9 @@ type Input struct {
 	Query          map[string]string `json:"query,omitempty"`
 	Body           any               `json:"body,omitempty"`
 	ResponseFormat string            `json:"responseFormat,omitempty"`
+	// CredentialID references a BFF credential; auth headers are resolved from
+	// the credential broker at execution time and never appear in logs/params.
+	CredentialID string `json:"credentialId,omitempty"`
 }
 
 type Output struct {
@@ -71,6 +74,17 @@ func main() {
 		}
 		for k, v := range in.Headers {
 			req.Header.Set(k, v)
+		}
+		// Resolved credential headers override static ones (auth must not be
+		// spoofable by a static header in the workflow def).
+		if in.CredentialID != "" {
+			credHeaders, err := action.ResolveCredentialHeaders(ctx, in.CredentialID)
+			if err != nil {
+				return Output{}, fmt.Errorf("credential %q: %w", in.CredentialID, err)
+			}
+			for k, v := range credHeaders {
+				req.Header.Set(k, v)
+			}
 		}
 		if bodyReader != nil && req.Header.Get("Content-Type") == "" {
 			req.Header.Set("Content-Type", "application/json")
