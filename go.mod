@@ -3,9 +3,12 @@ module github.com/unhingeddev-200/action-sample
 go 1.26.5
 
 require (
+	connectrpc.com/connect v1.20.0
 	github.com/dop251/goja v0.0.0-20260826204918-8f1c0696a37b
-	github.com/lunaya-dubai/lunaya-flow-runtime v0.0.0-20260919151004-7de38d9bd93e
+	github.com/lunaya-dubai/genius-ai-api v0.0.0-20260921184929-04468e689c4f
+	github.com/lunaya-dubai/lunaya-flow-runtime v0.0.0-20260921184924-2580a81508e6
 	github.com/spf13/afero v1.15.0
+	google.golang.org/protobuf v1.36.12
 )
 
 require (
