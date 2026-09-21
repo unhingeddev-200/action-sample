@@ -26,9 +26,12 @@ type Input struct {
 	// Operation is a catalog name: workitems.create | workitems.transition |
 	// workitems.assign | workitems.comment (allowlist enforced by the BFF).
 	Operation string `json:"operation"`
-	// Payload holds operation arguments; upstream steps typically bind
-	// fields like workItemId here.
+	// Payload holds operation arguments (title, toState, body, ...).
 	Payload map[string]any `json:"payload,omitempty"`
+	// WorkItemID is a top-level convenience so a downstream step can bind it
+	// from an upstream ProductCall output (/result/workItemId) while the rest
+	// of the payload stays literal. Merged into Payload["workItemId"] when set.
+	WorkItemID string `json:"workItemId,omitempty"`
 }
 
 type Output struct {
@@ -52,6 +55,12 @@ func main() {
 		base, hc, opts, err := action.InternalRPC()
 		if err != nil {
 			return Output{}, err
+		}
+		if wid := strings.TrimSpace(in.WorkItemID); wid != "" {
+			if in.Payload == nil {
+				in.Payload = map[string]any{}
+			}
+			in.Payload["workItemId"] = wid
 		}
 		payload, err := structpb.NewStruct(in.Payload)
 		if err != nil {
