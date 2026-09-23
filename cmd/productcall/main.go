@@ -23,15 +23,16 @@ import (
 )
 
 type Input struct {
-	// Operation is a catalog name: workitems.create | workitems.transition |
-	// workitems.assign | workitems.comment (allowlist enforced by the BFF).
+	// Operation is a catalog name: workitems.* | sources.* (allowlist enforced by the BFF).
 	Operation string `json:"operation"`
-	// Payload holds operation arguments (title, toState, body, ...).
+	// Payload holds operation arguments (title, toState, body, bodyText, ...).
 	Payload map[string]any `json:"payload,omitempty"`
 	// WorkItemID is a top-level convenience so a downstream step can bind it
 	// from an upstream ProductCall output (/result/workItemId) while the rest
 	// of the payload stays literal. Merged into Payload["workItemId"] when set.
 	WorkItemID string `json:"workItemId,omitempty"`
+	// SourceID mirrors WorkItemID for sources.* ops (/result/sourceId).
+	SourceID string `json:"sourceId,omitempty"`
 }
 
 type Output struct {
@@ -42,7 +43,7 @@ type Output struct {
 func main() {
 	action.Main(action.Meta{
 		Name:        "ProductCall",
-		Description: "Invoke a governed product operation (work items) via the BFF ProductOps service, attributed to the run.",
+		Description: "Invoke a governed product operation (work items / sources) via the BFF ProductOps service, attributed to the run.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		op := strings.TrimSpace(in.Operation)
 		if op == "" {
@@ -56,11 +57,14 @@ func main() {
 		if err != nil {
 			return Output{}, err
 		}
+		if in.Payload == nil {
+			in.Payload = map[string]any{}
+		}
 		if wid := strings.TrimSpace(in.WorkItemID); wid != "" {
-			if in.Payload == nil {
-				in.Payload = map[string]any{}
-			}
 			in.Payload["workItemId"] = wid
+		}
+		if sid := strings.TrimSpace(in.SourceID); sid != "" {
+			in.Payload["sourceId"] = sid
 		}
 		payload, err := structpb.NewStruct(in.Payload)
 		if err != nil {
