@@ -25,9 +25,14 @@ type Output struct {
 	InternalDate string   `json:"internalDate,omitempty"`
 	// Payload is the Gmail message.payload object (MIME tree). Use any so the
 	// generated JSON Schema accepts an object (json.RawMessage is []byte → array).
-	Payload      any      `json:"payload,omitempty"`
-	SizeEstimate int64    `json:"sizeEstimate,omitempty"`
-	Raw          string   `json:"raw,omitempty"`
+	Payload      any    `json:"payload,omitempty"`
+	SizeEstimate int64  `json:"sizeEstimate,omitempty"`
+	Raw          string `json:"raw,omitempty"`
+	// Flat fields for ProductCall / sources.create bindings.
+	Subject    string `json:"subject,omitempty"`
+	BodyText   string `json:"bodyText,omitempty"`
+	From       string `json:"from,omitempty"`
+	OccurredAt string `json:"occurredAt,omitempty"`
 }
 
 func main() {
@@ -48,6 +53,7 @@ func main() {
 				return Output{}, fmt.Errorf("decode payload: %w", err)
 			}
 		}
+		fields := gmail.ParseMessageFields(msg)
 		return Output{
 			ID:           msg.ID,
 			ThreadID:     msg.ThreadID,
@@ -57,6 +63,10 @@ func main() {
 			Payload:      payload,
 			SizeEstimate: msg.SizeEstimate,
 			Raw:          msg.Raw,
+			Subject:      fields.Subject,
+			BodyText:     fields.BodyText,
+			From:         fields.From,
+			OccurredAt:   fields.OccurredAt,
 		}, nil
 	})
 }

@@ -33,6 +33,16 @@ type Input struct {
 	WorkItemID string `json:"workItemId,omitempty"`
 	// SourceID mirrors WorkItemID for sources.* ops (/result/sourceId).
 	SourceID string `json:"sourceId,omitempty"`
+	// Top-level convenience fields merged into Payload when non-empty (ForEach /
+	// fromStep bindings). Prefer these over nesting dynamic values inside payload.
+	Title            string `json:"title,omitempty"`
+	BodyText         string `json:"bodyText,omitempty"`
+	ExternalIdentity string `json:"externalIdentity,omitempty"`
+	ExternalSystem   string `json:"externalSystem,omitempty"`
+	Channel          string `json:"channel,omitempty"`
+	OccurredAt       string `json:"occurredAt,omitempty"`
+	MediaType        string `json:"mediaType,omitempty"`
+	Filename         string `json:"filename,omitempty"`
 }
 
 type Output struct {
@@ -60,12 +70,16 @@ func main() {
 		if in.Payload == nil {
 			in.Payload = map[string]any{}
 		}
-		if wid := strings.TrimSpace(in.WorkItemID); wid != "" {
-			in.Payload["workItemId"] = wid
-		}
-		if sid := strings.TrimSpace(in.SourceID); sid != "" {
-			in.Payload["sourceId"] = sid
-		}
+		mergePayloadString(in.Payload, "workItemId", in.WorkItemID)
+		mergePayloadString(in.Payload, "sourceId", in.SourceID)
+		mergePayloadString(in.Payload, "title", in.Title)
+		mergePayloadString(in.Payload, "bodyText", in.BodyText)
+		mergePayloadString(in.Payload, "externalIdentity", in.ExternalIdentity)
+		mergePayloadString(in.Payload, "externalSystem", in.ExternalSystem)
+		mergePayloadString(in.Payload, "channel", in.Channel)
+		mergePayloadString(in.Payload, "occurredAt", in.OccurredAt)
+		mergePayloadString(in.Payload, "mediaType", in.MediaType)
+		mergePayloadString(in.Payload, "filename", in.Filename)
 		payload, err := structpb.NewStruct(in.Payload)
 		if err != nil {
 			return Output{}, fmt.Errorf("payload: %w", err)
@@ -86,6 +100,14 @@ func main() {
 		}
 		return Output{Operation: op, Result: resp.GetResult().AsMap()}, nil
 	})
+}
+
+func mergePayloadString(payload map[string]any, key, value string) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return
+	}
+	payload[key] = value
 }
 
 func asConnectError(err error, target **connect.Error) bool {
