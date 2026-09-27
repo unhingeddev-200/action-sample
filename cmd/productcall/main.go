@@ -43,6 +43,11 @@ type Input struct {
 	OccurredAt       string `json:"occurredAt,omitempty" jsonschema:"When the source happened (RFC3339 timestamp)"`
 	MediaType        string `json:"mediaType,omitempty" jsonschema:"MIME type when attaching content"`
 	Filename         string `json:"filename,omitempty" jsonschema:"Filename when attaching content"`
+	// ProposalID / ProposalIDs / ExtractionID are top-level conveniences for
+	// proposals.* and extractions.* ops (merged into payload when set).
+	ProposalID   string   `json:"proposalId,omitempty" jsonschema:"Proposal id; often bound from result.proposalId"`
+	ProposalIDs  []string `json:"proposalIds,omitempty" jsonschema:"Proposal ids for batch ops (proposals.accept); often bound from acceptedProposalIds"`
+	ExtractionID string   `json:"extractionId,omitempty" jsonschema:"Extraction id; often bound from result.extractionId"`
 }
 
 type Output struct {
@@ -80,6 +85,9 @@ func main() {
 		mergePayloadString(in.Payload, "occurredAt", in.OccurredAt)
 		mergePayloadString(in.Payload, "mediaType", in.MediaType)
 		mergePayloadString(in.Payload, "filename", in.Filename)
+		mergePayloadString(in.Payload, "proposalId", in.ProposalID)
+		mergePayloadString(in.Payload, "extractionId", in.ExtractionID)
+		mergePayloadStringSlice(in.Payload, "proposalIds", in.ProposalIDs)
 		payload, err := structpb.NewStruct(in.Payload)
 		if err != nil {
 			return Output{}, fmt.Errorf("payload: %w", err)
@@ -108,6 +116,23 @@ func mergePayloadString(payload map[string]any, key, value string) {
 		return
 	}
 	payload[key] = value
+}
+
+func mergePayloadStringSlice(payload map[string]any, key string, values []string) {
+	if len(values) == 0 {
+		return
+	}
+	out := make([]any, 0, len(values))
+	for _, v := range values {
+		v = strings.TrimSpace(v)
+		if v != "" {
+			out = append(out, v)
+		}
+	}
+	if len(out) == 0 {
+		return
+	}
+	payload[key] = out
 }
 
 func asConnectError(err error, target **connect.Error) bool {
