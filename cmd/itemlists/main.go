@@ -10,17 +10,17 @@ import (
 
 
 type Input struct {
-	Operation string `json:"operation"`
-	Items []any `json:"items,omitempty"`
-	Field string `json:"field,omitempty"`
-	Limit int `json:"limit,omitempty"`
+	Operation string `json:"operation" jsonschema:"What to do: splitOut, concatenate, or limit"`
+	Items []any `json:"items,omitempty" jsonschema:"List of items to transform"`
+	Field string `json:"field,omitempty" jsonschema:"Field name used by some operations (for example splitOut)"`
+	Limit int `json:"limit,omitempty" jsonschema:"Max items when operation is limit"`
 }
-type Output struct { Items []any `json:"items"` }
+type Output struct { Items []any `json:"items" jsonschema:"Resulting list after the operation"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "ItemLists",
-		Description: "item list helpers",
+		Description: "Common list helpers: split nested lists, concatenate, or limit length.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		switch strings.ToLower(in.Operation) {
 		case "limit":

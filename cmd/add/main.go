@@ -7,18 +7,18 @@ import (
 )
 
 type Input struct {
-	A float64 `json:"a"`
-	B float64 `json:"b"`
+	A float64 `json:"a" jsonschema:"First number to add"`
+	B float64 `json:"b" jsonschema:"Second number to add"`
 }
 
 type Output struct {
-	Result float64 `json:"result"`
+	Result float64 `json:"result" jsonschema:"Sum of a and b"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Add",
-		Description: "adds two numbers",
+		Description: "Add two numbers together and return the sum. Useful for simple math in a workflow.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		return Output{Result: in.A + in.B}, nil
 	})

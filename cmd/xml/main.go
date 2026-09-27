@@ -9,13 +9,18 @@ import (
 )
 
 
-type Input struct { Value string `json:"value"` }
-type Output struct { Data map[string]any `json:"data"` }
+type Input struct {
+	Value string `json:"value" jsonschema:"XML text to parse"`
+}
+
+type Output struct {
+	Data map[string]any `json:"data" jsonschema:"Simplified object representation of the XML (best-effort)"`
+}
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "XML",
-		Description: "parse xml to map best effort",
+		Description: "Parse XML text into a simple data object (best-effort; complex XML may be simplified).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		dec := xml.NewDecoder(strings.NewReader(in.Value))
 		var root map[string]any

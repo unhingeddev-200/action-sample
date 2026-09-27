@@ -13,20 +13,20 @@ import (
 
 
 type Input struct {
-	Operation string `json:"operation"`
-	Payload map[string]any `json:"payload,omitempty"`
-	Token string `json:"token,omitempty"`
-	Secret string `json:"secret,omitempty"`
+	Operation string `json:"operation" jsonschema:"sign (create a token) or decode (read a token)"`
+	Payload map[string]any `json:"payload,omitempty" jsonschema:"Claims/data to put inside the token when signing"`
+	Token string `json:"token,omitempty" jsonschema:"Existing JWT to decode (input) or signed JWT (output)"`
+	Secret string `json:"secret,omitempty" jsonschema:"Shared secret used to sign or verify (HS256)"`
 }
 type Output struct {
-	Token string `json:"token,omitempty"`
-	Claims map[string]any `json:"claims,omitempty"`
+	Token string `json:"token,omitempty" jsonschema:"Existing JWT to decode (input) or signed JWT (output)"`
+	Claims map[string]any `json:"claims,omitempty" jsonschema:"Decoded claims when operation is decode"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "JWT",
-		Description: "sign or decode jwt hs256",
+		Description: "Create or read a JWT (JSON Web Token) using a shared secret (HS256).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		switch strings.ToLower(in.Operation) {
 		case "sign":

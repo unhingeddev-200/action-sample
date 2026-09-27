@@ -12,18 +12,18 @@ import (
 )
 
 type Input struct {
-	Source string `json:"source"`
-	Input  any    `json:"input,omitempty"`
+	Source string `json:"source" jsonschema:"JavaScript to run. Return a value; input is available as the input variable; env vars from SetEnv appear on env."`
+	Input  any    `json:"input,omitempty" jsonschema:"Data passed into the script as input (often bound from a previous step)"`
 }
 
 type Output struct {
-	Result any `json:"result"`
+	Result any `json:"result" jsonschema:"Value returned by the script"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Code",
-		Description: "run JavaScript (goja) against input JSON",
+		Description: "Run a short JavaScript snippet on your data. Advanced: for custom transforms when built-in nodes are not enough.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		if in.Source == "" {
 			return Output{}, fmt.Errorf("source required")

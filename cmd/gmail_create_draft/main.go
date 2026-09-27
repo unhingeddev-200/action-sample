@@ -10,26 +10,26 @@ import (
 )
 
 type Input struct {
-	AccessToken string `json:"accessToken"`
-	UserID      string `json:"userId,omitempty"`
-	To          string `json:"to"`
-	From        string `json:"from,omitempty"`
-	Subject     string `json:"subject"`
-	TextBody    string `json:"textBody,omitempty"`
-	HtmlBody    string `json:"htmlBody,omitempty"`
+	AccessToken string `json:"accessToken" jsonschema:"Gmail access token (injected from credentialId at publish time)"`
+	UserID      string `json:"userId,omitempty" jsonschema:"Gmail account; use me for the connected mailbox"`
+	To          string `json:"to" jsonschema:"Recipient email address"`
+	From        string `json:"from,omitempty" jsonschema:"From address (optional)"`
+	Subject     string `json:"subject" jsonschema:"Draft subject line"`
+	TextBody    string `json:"textBody,omitempty" jsonschema:"Plain text body"`
+	HtmlBody    string `json:"htmlBody,omitempty" jsonschema:"HTML body (optional)"`
 }
 
 type Output struct {
-	ID              string   `json:"id"`
-	MessageID       string   `json:"messageId,omitempty"`
-	MessageThreadID string   `json:"messageThreadId,omitempty"`
-	LabelIDs        []string `json:"labelIds,omitempty"`
+	ID              string   `json:"id" jsonschema:"Gmail draft id"`
+	MessageID       string   `json:"messageId,omitempty" jsonschema:"Message id inside the draft"`
+	MessageThreadID string   `json:"messageThreadId,omitempty" jsonschema:"Thread id for the draft message"`
+	LabelIDs        []string `json:"labelIds,omitempty" jsonschema:"Label ids on the draft message"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "GmailCreateDraft",
-		Description: "Create a Gmail draft from to/subject/body fields.",
+		Description: "Create a Gmail draft (does not send). Uses a saved Google credential.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		if strings.TrimSpace(in.AccessToken) == "" {
 			return Output{}, fmt.Errorf("accessToken is required")

@@ -10,17 +10,17 @@ import (
 
 
 type Input struct {
-	Items []any `json:"items"`
-	Field string `json:"field,omitempty"`
-	Op string `json:"op"`
-	Separator string `json:"separator,omitempty"`
+	Items []any `json:"items" jsonschema:"List of items to aggregate"`
+	Field string `json:"field,omitempty" jsonschema:"Field on each item to aggregate (for sum, avg, min, max, join)"`
+	Op string `json:"op" jsonschema:"Aggregation: sum, count, avg, min, max, or join"`
+	Separator string `json:"separator,omitempty" jsonschema:"Text placed between values when op is join"`
 }
-type Output struct { Result any `json:"result"` }
+type Output struct { Result any `json:"result" jsonschema:"Single aggregated value"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Aggregate",
-		Description: "aggregate field",
+		Description: "Compute one value from a list (sum, count, average, min, max, or join texts).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		op := strings.ToLower(in.Op)
 		switch op {

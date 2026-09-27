@@ -14,16 +14,16 @@ import (
 
 
 type Input struct {
-	Secret string `json:"secret"`
-	Digits int `json:"digits,omitempty"`
-	Period int `json:"period,omitempty"`
+	Secret string `json:"secret" jsonschema:"Shared TOTP secret (the same secret used by authenticator apps)"`
+	Digits int `json:"digits,omitempty" jsonschema:"Number of digits in the code (default 6)"`
+	Period int `json:"period,omitempty" jsonschema:"Code lifetime in seconds (default 30)"`
 }
-type Output struct { Code string `json:"code"` }
+type Output struct { Code string `json:"code" jsonschema:"Current one-time password code"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Totp",
-		Description: "generate totp",
+		Description: "Generate a one-time password (TOTP) from a shared secret, like an authenticator app.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		digits := in.Digits
 		if digits == 0 { digits = 6 }

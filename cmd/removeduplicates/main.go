@@ -11,15 +11,15 @@ import (
 
 
 type Input struct {
-	Items []any `json:"items"`
-	Key string `json:"key,omitempty"`
+	Items []any `json:"items" jsonschema:"List that may contain duplicates"`
+	Key string `json:"key,omitempty" jsonschema:"Field used to decide uniqueness (if empty, the whole item is compared)"`
 }
-type Output struct { Items []any `json:"items"` }
+type Output struct { Items []any `json:"items" jsonschema:"List with duplicates removed"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "RemoveDuplicates",
-		Description: "dedupe items",
+		Description: "Remove duplicate items from a list, optionally using one field as the unique key.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		seen := map[string]struct{}{}
 		var out []any

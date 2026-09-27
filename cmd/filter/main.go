@@ -10,17 +10,17 @@ import (
 
 
 type Input struct {
-	Items []any `json:"items,omitempty"`
-	Field string `json:"field,omitempty"`
-	Op string `json:"op,omitempty"`
-	Value any `json:"value,omitempty"`
+	Items []any `json:"items,omitempty" jsonschema:"List of items to filter"`
+	Field string `json:"field,omitempty" jsonschema:"Field name on each item to compare (leave empty to compare the whole item)"`
+	Op string `json:"op,omitempty" jsonschema:"Comparison: eq, ne, gt, gte, lt, lte, contains, or truthy"`
+	Value any `json:"value,omitempty" jsonschema:"Value to compare against"`
 }
-type Output struct { Items []any `json:"items"` }
+type Output struct { Items []any `json:"items" jsonschema:"Items that passed the filter"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Filter",
-		Description: "filter items",
+		Description: "Keep only items from a list that match a condition (equals, contains, greater than, and similar).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		op := strings.ToLower(strings.TrimSpace(in.Op))
 		if op == "" { op = "eq" }

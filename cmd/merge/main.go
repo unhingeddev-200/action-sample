@@ -8,18 +8,18 @@ import (
 
 
 type Input struct {
-	Mode   string         `json:"mode,omitempty"`
-	Inputs []map[string]any `json:"inputs,omitempty"`
+	Mode   string         `json:"mode,omitempty" jsonschema:"How to combine inputs: combine (merge objects), append (list of items), or chooseBranch"`
+	Inputs []map[string]any `json:"inputs,omitempty" jsonschema:"Objects from upstream steps to merge (often filled via bindings)"`
 }
 type Output struct {
-	Data map[string]any `json:"data"`
-	Items []any `json:"items,omitempty"`
+	Data map[string]any `json:"data" jsonschema:"Merged object when mode is combine"`
+	Items []any `json:"items,omitempty" jsonschema:"List of items when mode is append"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Merge",
-		Description: "merge input objects",
+		Description: "Combine results from several previous steps into one object or list (fan-in).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		mode := strings.ToLower(strings.TrimSpace(in.Mode))
 		if mode == "" { mode = "combine" }

@@ -11,16 +11,16 @@ import (
 
 
 type Input struct {
-	Items []any `json:"items"`
-	Field string `json:"field,omitempty"`
-	Order string `json:"order,omitempty"`
+	Items []any `json:"items" jsonschema:"List of items to sort"`
+	Field string `json:"field,omitempty" jsonschema:"Field name to sort by (optional for simple values)"`
+	Order string `json:"order,omitempty" jsonschema:"Sort direction: asc (A→Z / small→large) or desc"`
 }
-type Output struct { Items []any `json:"items"` }
+type Output struct { Items []any `json:"items" jsonschema:"Sorted list"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Sort",
-		Description: "sort items",
+		Description: "Sort a list of items by a field, ascending or descending.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		items := append([]any(nil), in.Items...)
 		desc := strings.EqualFold(in.Order, "desc")

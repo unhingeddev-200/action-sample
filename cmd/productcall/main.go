@@ -24,36 +24,36 @@ import (
 
 type Input struct {
 	// Operation is a catalog name: workitems.* | sources.* (allowlist enforced by the BFF).
-	Operation string `json:"operation"`
+	Operation string `json:"operation" jsonschema:"Product operation to run (for example workitems.create, sources.create, proposals.list). Must be an allowed operation."`
 	// Payload holds operation arguments (title, toState, body, bodyText, ...).
-	Payload map[string]any `json:"payload,omitempty"`
+	Payload map[string]any `json:"payload,omitempty" jsonschema:"Arguments for the operation (title, status, comments, candidate lists, and similar). Prefer top-level convenience fields when binding dynamic values."`
 	// WorkItemID is a top-level convenience so a downstream step can bind it
 	// from an upstream ProductCall output (/result/workItemId) while the rest
 	// of the payload stays literal. Merged into Payload["workItemId"] when set.
-	WorkItemID string `json:"workItemId,omitempty"`
+	WorkItemID string `json:"workItemId,omitempty" jsonschema:"Work item id to act on; often bound from a previous ProductCall result.workItemId"`
 	// SourceID mirrors WorkItemID for sources.* ops (/result/sourceId).
-	SourceID string `json:"sourceId,omitempty"`
+	SourceID string `json:"sourceId,omitempty" jsonschema:"Source document id; often bound from result.sourceId"`
 	// Top-level convenience fields merged into Payload when non-empty (ForEach /
 	// fromStep bindings). Prefer these over nesting dynamic values inside payload.
-	Title            string `json:"title,omitempty"`
-	BodyText         string `json:"bodyText,omitempty"`
-	ExternalIdentity string `json:"externalIdentity,omitempty"`
-	ExternalSystem   string `json:"externalSystem,omitempty"`
-	Channel          string `json:"channel,omitempty"`
-	OccurredAt       string `json:"occurredAt,omitempty"`
-	MediaType        string `json:"mediaType,omitempty"`
-	Filename         string `json:"filename,omitempty"`
+	Title            string `json:"title,omitempty" jsonschema:"Title for create-style operations (merged into payload)"`
+	BodyText         string `json:"bodyText,omitempty" jsonschema:"Main text body for create/comment-style operations"`
+	ExternalIdentity string `json:"externalIdentity,omitempty" jsonschema:"External system identity key for the source (dedupe/import)"`
+	ExternalSystem   string `json:"externalSystem,omitempty" jsonschema:"Name of the external system (for example gmail or plaud)"`
+	Channel          string `json:"channel,omitempty" jsonschema:"Channel for the source (email, chat, note, and similar)"`
+	OccurredAt       string `json:"occurredAt,omitempty" jsonschema:"When the source happened (RFC3339 timestamp)"`
+	MediaType        string `json:"mediaType,omitempty" jsonschema:"MIME type when attaching content"`
+	Filename         string `json:"filename,omitempty" jsonschema:"Filename when attaching content"`
 }
 
 type Output struct {
-	Operation string         `json:"operation"`
-	Result    map[string]any `json:"result"`
+	Operation string         `json:"operation" jsonschema:"Operation that was run"`
+	Result    map[string]any `json:"result" jsonschema:"Operation result (ids and fields such as workItemId, sourceId, proposalId, status)"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "ProductCall",
-		Description: "Invoke a governed product operation (work items / sources) via the BFF ProductOps service, attributed to the run.",
+		Description: "Perform a Work Office product action as the run user (create work items, sources, extractions, proposals, transitions, comments). Same permissions and history as the UI.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		op := strings.TrimSpace(in.Operation)
 		if op == "" {

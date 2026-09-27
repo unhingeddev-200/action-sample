@@ -15,27 +15,27 @@ import (
 )
 
 type Input struct {
-	Method         string            `json:"method"`
-	URL            string            `json:"url"`
-	Headers        map[string]string `json:"headers,omitempty"`
-	Query          map[string]string `json:"query,omitempty"`
-	Body           any               `json:"body,omitempty"`
-	ResponseFormat string            `json:"responseFormat,omitempty"`
+	Method         string            `json:"method" jsonschema:"HTTP method such as GET, POST, PUT, PATCH, or DELETE"`
+	URL            string            `json:"url" jsonschema:"Full URL to call (including https://)"`
+	Headers        map[string]string `json:"headers,omitempty" jsonschema:"Extra HTTP headers (name → value)"`
+	Query          map[string]string `json:"query,omitempty" jsonschema:"URL query parameters (name → value)"`
+	Body           any               `json:"body,omitempty" jsonschema:"Request body for POST/PUT/PATCH (text or JSON)"`
+	ResponseFormat string            `json:"responseFormat,omitempty" jsonschema:"How to read the response: json or text"`
 	// CredentialID references a BFF credential; auth headers are resolved from
 	// the credential broker at execution time and never appear in logs/params.
-	CredentialID string `json:"credentialId,omitempty"`
+	CredentialID string `json:"credentialId,omitempty" jsonschema:"Saved credential from the product (for login/API keys). Prefer this over putting secrets in headers."`
 }
 
 type Output struct {
-	Status  int               `json:"status"`
-	Headers map[string]string `json:"headers"`
-	Body    any               `json:"body"`
+	Status  int               `json:"status" jsonschema:"HTTP status code (for example 200 or 404)"`
+	Headers map[string]string `json:"headers" jsonschema:"Response headers"`
+	Body    any               `json:"body" jsonschema:"Response body (parsed JSON when possible, otherwise text)"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "HttpRequest",
-		Description: "perform an HTTP request",
+		Description: "Call any HTTP API (GET/POST/…). Use a saved credential when the API needs login.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		method := strings.ToUpper(strings.TrimSpace(in.Method))
 		if method == "" {

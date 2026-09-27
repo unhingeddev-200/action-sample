@@ -7,15 +7,15 @@ import (
 
 
 type Input struct {
-	Data map[string]any `json:"data,omitempty"`
-	Mapping map[string]string `json:"mapping"`
+	Data map[string]any `json:"data,omitempty" jsonschema:"Object whose keys should be renamed"`
+	Mapping map[string]string `json:"mapping" jsonschema:"Map of old field name → new field name"`
 }
-type Output struct { Data map[string]any `json:"data"` }
+type Output struct { Data map[string]any `json:"data" jsonschema:"Object with renamed keys"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "RenameKeys",
-		Description: "rename object keys",
+		Description: "Rename fields on an object (for example change customer_name to customerName).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		src := in.Data
 		if src == nil { src = map[string]any{} }

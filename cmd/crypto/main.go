@@ -16,17 +16,17 @@ import (
 
 
 type Input struct {
-	Operation string `json:"operation"`
-	Algorithm string `json:"algorithm,omitempty"`
-	Value string `json:"value"`
-	Secret string `json:"secret,omitempty"`
+	Operation string `json:"operation" jsonschema:"What to do: hash, hmac, base64Encode, or base64Decode"`
+	Algorithm string `json:"algorithm,omitempty" jsonschema:"Hash algorithm for hash/hmac: sha256 (default), sha1, or md5"`
+	Value string `json:"value" jsonschema:"Text to hash, sign, encode, or decode"`
+	Secret string `json:"secret,omitempty" jsonschema:"Shared secret required for hmac"`
 }
-type Output struct { Result string `json:"result"` }
+type Output struct { Result string `json:"result" jsonschema:"Resulting hash, signature, or encoded/decoded text"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Crypto",
-		Description: "hash hmac base64",
+		Description: "Hash, HMAC-sign, or Base64 encode/decode text (utility for checksums and simple encoding).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		alg := strings.ToLower(in.Algorithm)
 		if alg == "" { alg = "sha256" }

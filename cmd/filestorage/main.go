@@ -16,32 +16,32 @@ import (
 )
 
 type Input struct {
-	Operation string `json:"operation"`
-	Path      string `json:"path"`
-	Content   string `json:"content,omitempty"`
-	Encoding  string `json:"encoding,omitempty"`
-	Recursive bool   `json:"recursive,omitempty"`
+	Operation string `json:"operation" jsonschema:"What to do: read, write, list, delete, or exists"`
+	Path      string `json:"path" jsonschema:"File or folder path inside the shared file storage (SeaweedFS genai bucket)"`
+	Content   string `json:"content,omitempty" jsonschema:"File contents when writing"`
+	Encoding  string `json:"encoding,omitempty" jsonschema:"How content is encoded: utf8 (default) or base64"`
+	Recursive bool   `json:"recursive,omitempty" jsonschema:"When listing, include files in subfolders"`
 }
 
 type FileEntry struct {
-	Name  string `json:"name"`
-	Path  string `json:"path"`
-	Size  int64  `json:"size,omitempty"`
-	IsDir bool   `json:"isDir"`
+	Name  string `json:"name" jsonschema:"File or folder name"`
+	Path  string `json:"path" jsonschema:"Full path of this entry"`
+	Size  int64  `json:"size,omitempty" jsonschema:"Size in bytes (files only)"`
+	IsDir bool   `json:"isDir" jsonschema:"True if this entry is a folder"`
 }
 
 type Output struct {
-	OK       bool        `json:"ok"`
-	Content  string      `json:"content,omitempty"`
-	Encoding string      `json:"encoding,omitempty"`
-	Exists   bool        `json:"exists,omitempty"`
-	Files    []FileEntry `json:"files,omitempty"`
+	OK       bool        `json:"ok" jsonschema:"True when the operation succeeded"`
+	Content  string      `json:"content,omitempty" jsonschema:"File contents when reading"`
+	Encoding string      `json:"encoding,omitempty" jsonschema:"Encoding of content"`
+	Exists   bool        `json:"exists,omitempty" jsonschema:"Whether the path exists (exists operation)"`
+	Files    []FileEntry `json:"files,omitempty" jsonschema:"Entries returned by list"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "FileStorage",
-		Description: "Read, write, list, delete, and stat files on cluster S3 (SeaweedFS).",
+		Description: "Read, write, list, delete, or check files in the platform file storage (shared S3-compatible storage).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		fs, err := s3sdk.NewFSFromEnv()
 		if err != nil {

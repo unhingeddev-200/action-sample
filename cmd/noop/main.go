@@ -8,13 +8,13 @@ import (
 
 type Input struct{}
 type Output struct {
-	OK bool `json:"ok"`
+	OK bool `json:"ok" jsonschema:"Always true when the step finishes successfully"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "NoOp",
-		Description: "no-op pass-through",
+		Description: "Do nothing and continue. Useful as a placeholder or join point on the canvas.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		return Output{OK: true}, nil
 	})

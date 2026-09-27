@@ -6,13 +6,18 @@ import (
 )
 
 
-type Input struct { Value string `json:"value"` }
-type Output struct { Markdown string `json:"markdown"` }
+type Input struct {
+	Value string `json:"value" jsonschema:"Markdown text"`
+}
+
+type Output struct {
+	Markdown string `json:"markdown" jsonschema:"Markdown text passed through for later steps or the UI"`
+}
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Markdown",
-		Description: "markdown passthrough",
+		Description: "Pass Markdown text through the workflow (rendering is left to the client/UI).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		return Output{Markdown: in.Value}, nil
 

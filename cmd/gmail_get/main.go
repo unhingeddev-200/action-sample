@@ -11,34 +11,34 @@ import (
 )
 
 type Input struct {
-	AccessToken string `json:"accessToken"`
-	UserID      string `json:"userId,omitempty"`
-	MessageID   string `json:"messageId"`
-	Format      string `json:"format,omitempty"` // full | metadata | minimal | raw
+	AccessToken string `json:"accessToken" jsonschema:"Gmail access token (injected from credentialId at publish time)"`
+	UserID      string `json:"userId,omitempty" jsonschema:"Gmail account; use me for the connected mailbox"`
+	MessageID   string `json:"messageId" jsonschema:"Gmail message id (often bound from Gmail List / For Each item.id)"`
+	Format      string `json:"format,omitempty" jsonschema:"How much detail to fetch: full (default), metadata, minimal, or raw"` // full | metadata | minimal | raw
 }
 
 type Output struct {
-	ID           string   `json:"id"`
-	ThreadID     string   `json:"threadId,omitempty"`
-	LabelIDs     []string `json:"labelIds,omitempty"`
-	Snippet      string   `json:"snippet,omitempty"`
-	InternalDate string   `json:"internalDate,omitempty"`
+	ID           string   `json:"id" jsonschema:"Gmail message id"`
+	ThreadID     string   `json:"threadId,omitempty" jsonschema:"Gmail thread id"`
+	LabelIDs     []string `json:"labelIds,omitempty" jsonschema:"Label ids on the message"`
+	Snippet      string   `json:"snippet,omitempty" jsonschema:"Short preview text of the message"`
+	InternalDate string   `json:"internalDate,omitempty" jsonschema:"Gmail internal timestamp"`
 	// Payload is the Gmail message.payload object (MIME tree). Use any so the
 	// generated JSON Schema accepts an object (json.RawMessage is []byte → array).
-	Payload      any    `json:"payload,omitempty"`
-	SizeEstimate int64  `json:"sizeEstimate,omitempty"`
-	Raw          string `json:"raw,omitempty"`
+	Payload      any    `json:"payload,omitempty" jsonschema:"Raw Gmail payload structure (advanced)"`
+	SizeEstimate int64  `json:"sizeEstimate,omitempty" jsonschema:"Approximate message size in bytes"`
+	Raw          string `json:"raw,omitempty" jsonschema:"Raw RFC822 content when format is raw"`
 	// Flat fields for ProductCall / sources.create bindings.
-	Subject    string `json:"subject,omitempty"`
-	BodyText   string `json:"bodyText,omitempty"`
-	From       string `json:"from,omitempty"`
-	OccurredAt string `json:"occurredAt,omitempty"`
+	Subject    string `json:"subject,omitempty" jsonschema:"Email subject"`
+	BodyText   string `json:"bodyText,omitempty" jsonschema:"Plain text body extracted from the message"`
+	From       string `json:"from,omitempty" jsonschema:"Sender address"`
+	OccurredAt string `json:"occurredAt,omitempty" jsonschema:"When the message occurred (RFC3339 when available)"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "GmailGet",
-		Description: "Get a Gmail message by id.",
+		Description: "Fetch one Gmail message by id, including subject and body text helpers for later steps.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		if strings.TrimSpace(in.AccessToken) == "" {
 			return Output{}, fmt.Errorf("accessToken is required")

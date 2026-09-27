@@ -11,28 +11,28 @@ import (
 )
 
 type Case struct {
-	Match any    `json:"match,omitempty"`
-	Label string `json:"label"`
+	Match any    `json:"match,omitempty" jsonschema:"Value that selects this branch in switch mode"`
+	Label string `json:"label" jsonschema:"Label of the outgoing edge to follow when this case matches"`
 }
 
 type Input struct {
-	Mode    string `json:"mode"`
-	Op      string `json:"op,omitempty"`
-	Left    any    `json:"left,omitempty"`
-	Right   any    `json:"right,omitempty"`
-	Value   any    `json:"value,omitempty"`
-	Cases   []Case `json:"cases,omitempty"`
-	Default string `json:"default,omitempty"`
+	Mode    string `json:"mode" jsonschema:"Branch style: if (true/false style) or switch (pick among labeled cases)"`
+	Op      string `json:"op,omitempty" jsonschema:"Comparison for if mode: eq, ne, gt, gte, lt, lte, or truthy"`
+	Left    any    `json:"left,omitempty" jsonschema:"Left side of the comparison (if mode)"`
+	Right   any    `json:"right,omitempty" jsonschema:"Right side of the comparison (if mode)"`
+	Value   any    `json:"value,omitempty" jsonschema:"Value to match against cases (switch mode)"`
+	Cases   []Case `json:"cases,omitempty" jsonschema:"Named cases for switch mode; each case points to an edge label"`
+	Default string `json:"default,omitempty" jsonschema:"Edge label to follow when no case matches"`
 }
 
 type Output struct {
-	Selected string `json:"selected"`
+	Selected string `json:"selected" jsonschema:"Label of the edge that was chosen"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Branch",
-		Description: "dedicated If/Switch branch — outputs selected edge label",
+		Description: "Choose which path the workflow takes next (if/else or switch among labeled edges).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		switch stringsToLower(in.Mode) {
 		case "if":

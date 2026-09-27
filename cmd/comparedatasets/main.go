@@ -10,20 +10,20 @@ import (
 
 
 type Input struct {
-	A []any `json:"a"`
-	B []any `json:"b"`
-	Key string `json:"key"`
+	A []any `json:"a" jsonschema:"First list of objects"`
+	B []any `json:"b" jsonschema:"Second list of objects"`
+	Key string `json:"key" jsonschema:"Field name used to match items between the two lists"`
 }
 type Output struct {
-	OnlyA []any `json:"onlyA"`
-	OnlyB []any `json:"onlyB"`
-	Both []any `json:"both"`
+	OnlyA []any `json:"onlyA" jsonschema:"Items that appear only in list A"`
+	OnlyB []any `json:"onlyB" jsonschema:"Items that appear only in list B"`
+	Both []any `json:"both" jsonschema:"Items that appear in both lists (matched by key)"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "CompareDatasets",
-		Description: "diff arrays by key",
+		Description: "Compare two lists of objects by a key field and show what is only in A, only in B, or in both.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		index := func(items []any) map[string]any {
 			m := map[string]any{}

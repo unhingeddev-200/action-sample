@@ -8,13 +8,15 @@ import (
 )
 
 
-type Input struct { Message string `json:"message"` }
+type Input struct {
+	Message string `json:"message" jsonschema:"Error message shown when the run fails"`
+}
 type Output struct {}
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "StopAndError",
-		Description: "fail the run",
+		Description: "Stop the workflow and mark the run as failed, with a clear error message.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		msg := strings.TrimSpace(in.Message)
 		if msg == "" { msg = "stopped" }

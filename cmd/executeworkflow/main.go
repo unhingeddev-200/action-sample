@@ -14,19 +14,19 @@ import (
 
 
 type Input struct {
-	WorkflowId string `json:"workflowId"`
-	BffUrl string `json:"bffUrl,omitempty"`
-	Token string `json:"token,omitempty"`
+	WorkflowId string `json:"workflowId" jsonschema:"ID of the published product workflow to start"`
+	BffUrl string `json:"bffUrl,omitempty" jsonschema:"Internal BFF URL override (usually left empty in the product)"`
+	Token string `json:"token,omitempty" jsonschema:"Internal auth token override (usually injected automatically)"`
 }
 type Output struct {
-	Status int `json:"status"`
-	Body any `json:"body"`
+	Status int `json:"status" jsonschema:"HTTP status from starting the workflow"`
+	Body any `json:"body" jsonschema:"Response body from starting the workflow (includes the new run id when successful)"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "ExecuteWorkflow",
-		Description: "start another workflow via BFF",
+		Description: "Start another published workflow as a sub-run (call one workflow from another).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		base := strings.TrimSpace(in.BffUrl)
 		if base == "" { base = strings.TrimSpace(os.Getenv("GENIUS_BFF_URL")) }

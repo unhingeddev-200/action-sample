@@ -10,15 +10,15 @@ import (
 
 
 type Input struct {
-	Data any `json:"data,omitempty"`
-	Field string `json:"field"`
+	Data any `json:"data,omitempty" jsonschema:"Object that contains the list field"`
+	Field string `json:"field" jsonschema:"Name of the field that holds the list to extract"`
 }
-type Output struct { Items []any `json:"items"` }
+type Output struct { Items []any `json:"items" jsonschema:"The extracted list"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "SplitOut",
-		Description: "split field to items",
+		Description: "Take a list nested inside an object and promote it to a top-level list for later steps.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		m, _ := in.Data.(map[string]any)
 		var raw any = in.Data

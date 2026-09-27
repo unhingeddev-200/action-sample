@@ -140,26 +140,26 @@ func (c *Client) doJSON(ctx context.Context, method, path string, query map[stri
 }
 
 type MessageRef struct {
-	ID       string   `json:"id"`
-	ThreadID string   `json:"threadId,omitempty"`
-	LabelIDs []string `json:"labelIds,omitempty"`
+	ID       string   `json:"id" jsonschema:"Gmail message id"`
+	ThreadID string   `json:"threadId,omitempty" jsonschema:"Gmail thread id"`
+	LabelIDs []string `json:"labelIds,omitempty" jsonschema:"Label ids on the message"`
 }
 
 type ListResult struct {
-	Messages           []MessageRef `json:"messages"`
-	NextPageToken      string       `json:"nextPageToken,omitempty"`
-	ResultSizeEstimate int64        `json:"resultSizeEstimate,omitempty"`
+	Messages           []MessageRef `json:"messages" jsonschema:"Matching messages (id/threadId)"`
+	NextPageToken      string       `json:"nextPageToken,omitempty" jsonschema:"Token for the next page of results"`
+	ResultSizeEstimate int64        `json:"resultSizeEstimate,omitempty" jsonschema:"Approximate total matches"`
 }
 
 type Message struct {
-	ID           string          `json:"id"`
-	ThreadID     string          `json:"threadId,omitempty"`
-	LabelIDs     []string        `json:"labelIds,omitempty"`
-	Snippet      string          `json:"snippet,omitempty"`
-	InternalDate string          `json:"internalDate,omitempty"`
-	Payload      json.RawMessage `json:"payload,omitempty"`
-	SizeEstimate int64           `json:"sizeEstimate,omitempty"`
-	Raw          string          `json:"raw,omitempty"`
+	ID           string          `json:"id" jsonschema:"Gmail message id"`
+	ThreadID     string          `json:"threadId,omitempty" jsonschema:"Gmail thread id"`
+	LabelIDs     []string        `json:"labelIds,omitempty" jsonschema:"Label ids on the message"`
+	Snippet      string          `json:"snippet,omitempty" jsonschema:"Short preview text"`
+	InternalDate string          `json:"internalDate,omitempty" jsonschema:"Gmail internal timestamp"`
+	Payload      json.RawMessage `json:"payload,omitempty" jsonschema:"Raw Gmail MIME payload"`
+	SizeEstimate int64           `json:"sizeEstimate,omitempty" jsonschema:"Approximate size in bytes"`
+	Raw          string          `json:"raw,omitempty" jsonschema:"Raw RFC822 content"`
 }
 
 func (c *Client) Send(ctx context.Context, userID, raw string) (MessageRef, error) {

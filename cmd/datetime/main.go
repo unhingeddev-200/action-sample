@@ -10,18 +10,18 @@ import (
 
 
 type Input struct {
-	Operation string `json:"operation"`
-	Value string `json:"value,omitempty"`
-	Layout string `json:"layout,omitempty"`
-	Amount int `json:"amount,omitempty"`
-	Unit string `json:"unit,omitempty"`
+	Operation string `json:"operation" jsonschema:"What to do: now, format, parse, or add"`
+	Value string `json:"value,omitempty" jsonschema:"Timestamp text to format, parse, or add to"`
+	Layout string `json:"layout,omitempty" jsonschema:"Date/time format pattern (Go layout style)"`
+	Amount int `json:"amount,omitempty" jsonschema:"How much to add when operation is add"`
+	Unit string `json:"unit,omitempty" jsonschema:"Unit for add: seconds, minutes, hours, or days"`
 }
-type Output struct { Result string `json:"result"` }
+type Output struct { Result string `json:"result" jsonschema:"Resulting date/time as text"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "DateTime",
-		Description: "date time helpers",
+		Description: "Work with dates and times: get now, format, parse, or add an offset.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		layout := in.Layout
 		if layout == "" { layout = time.RFC3339 }

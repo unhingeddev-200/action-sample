@@ -10,17 +10,17 @@ import (
 
 
 type Input struct {
-	Items []any `json:"items"`
-	GroupBy string `json:"groupBy"`
-	Field string `json:"field,omitempty"`
-	Op string `json:"op"`
+	Items []any `json:"items" jsonschema:"List of items to summarize"`
+	GroupBy string `json:"groupBy" jsonschema:"Field used to group rows (like a pivot table category)"`
+	Field string `json:"field,omitempty" jsonschema:"Numeric field to aggregate within each group"`
+	Op string `json:"op" jsonschema:"Aggregation per group: sum, count, or avg"`
 }
-type Output struct { Rows []map[string]any `json:"rows"` }
+type Output struct { Rows []map[string]any `json:"rows" jsonschema:"One row per group with the aggregated value"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Summarize",
-		Description: "group by summarize",
+		Description: "Group a list by a field and calculate a total or count per group (like a simple pivot table).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		groups := map[string][]any{}
 		order := []string{}

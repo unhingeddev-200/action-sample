@@ -9,17 +9,17 @@ import (
 )
 
 type Input struct {
-	Seconds float64 `json:"seconds,omitempty"`
+	Seconds float64 `json:"seconds,omitempty" jsonschema:"How long to wait, in seconds. Values of 60 or more use a durable wait that survives restarts; shorter waits pause inside the step."`
 }
 
 type Output struct {
-	Slept float64 `json:"slept"`
+	Slept float64 `json:"slept" jsonschema:"How many seconds the step actually waited"`
 }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Wait",
-		Description: "sleep for N seconds",
+		Description: "Pause the workflow for a number of seconds before continuing. Long waits (60s+) are durable and survive restarts.",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		if in.Seconds < 0 {
 			return Output{}, fmt.Errorf("seconds must be >= 0")

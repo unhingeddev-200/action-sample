@@ -13,15 +13,15 @@ import (
 
 
 type Input struct {
-	Operation string `json:"operation"`
-	Value string `json:"value"`
+	Operation string `json:"operation" jsonschema:"gzip (compress) or gunzip (decompress); values are Base64 text"`
+	Value string `json:"value" jsonschema:"Base64 text to compress or decompress"`
 }
-type Output struct { Result string `json:"result"` }
+type Output struct { Result string `json:"result" jsonschema:"Base64 result after compress/decompress"` }
 
 func main() {
 	action.Main(action.Meta{
 		Name:        "Compression",
-		Description: "gzip base64",
+		Description: "Compress or decompress Base64 data with gzip (for packing larger payloads).",
 	}, func(ctx context.Context, in Input) (Output, error) {
 		switch strings.ToLower(in.Operation) {
 		case "gzip":
